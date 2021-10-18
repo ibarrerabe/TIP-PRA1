@@ -67,5 +67,5 @@ class WebScraper:
         Executa el procés de web scraping
         :return: null
         """
-        content_html = self.__download_web()
+        content_html = self.__download_web(self.url)
         self.__get_links(content_html)
