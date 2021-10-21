@@ -7,12 +7,12 @@ class WebScraper:
         self.url = url
         self.output_data = []
 
-    def __download_web(self):
+    def __download_web(self, url):
         """
         Descarrega la web guardada a la variable self.url
         :return: Objecte del tipus BeautifulSoup (contingut de la web en HTML)
         """
-        page = requests.get(self.url)
+        page = requests.get(url)
 
         if page.status_code == 200:
             return BeautifulSoup(page.content, "html.parser")
@@ -43,10 +43,29 @@ class WebScraper:
 
         return list_categories
 
+      def __get_articles(self, content):
+        """
+        Donat la URL d'una categoria,
+        obté el llistat d`'URL d'accés dels articles
+        :param categoria: Objecte del tipus String
+        :return: list_: Array
+        """
+        content_html = self.__download_web(content)
+        articles = content_html.findChildren("article", recursive=True)
+        list_articles = []
+        for articles_a in articles:
+            href_ = articles_a.find('a')
+            if href_:
+                url_art = href_.get('href')
+                if url_art:
+                    list_articles.append([href_])
+        return list_articles
+
+    
     def init_process(self):
         """
         Executa el procés de web scraping
         :return: null
         """
-        content_html = self.__download_web()
+        content_html = self.__download_web(self.url)
         self.__get_links(content_html)
